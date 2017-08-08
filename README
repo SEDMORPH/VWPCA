@@ -1,0 +1,167 @@
+VWPCA: a PCA package for astronomical spectra
+=============================================
+
+This package brings together all the common publicly available PCA
+algorithms, plus some less common ones. Once you have untarred the
+code, the program VWPCA_TRYME.PRO is easily run from the IDL command
+line: 
+IDL> vwpca_tryme
+and will produce an output postscript file with example eigenvectors from
+each of the PCA algorihms (see descritpion below). In order to run a
+PCA on your own data, 
+copy your example of choice from VWPCA_TRYME.PRO, or insert your own
+data into this code. The normalisation of your data is left up to you;
+your choice of normalisation will impact on the resulting 
+eigenspectra. If in doubt, divide each vector by its mean.
+
+Although the code was put together with (optical) spectra in mind,
+it should be applicable to any sensible dataset. I would love to know
+what it does/does not work on if you have time to drop me a note.
+
+Below are some details of the different codes, ordered by their role
+in the PCA analysis. 
+
+This package would not have been possible without many others, in
+particular the authors of some of the new algorithms:
+Tamas Budavari
+Gerard Lemson
+Darren Madgwick
+
+
+We would appreciate any acknowledgements for the use of this code.  In
+particular, please if you use the ROBUST algorithm, cite this paper:
+Budavari et al. 2008, MNRAS, arXiv:0809.0881
+
+
+Vivienne Wild 
+(wild@iap.fr  2008-11-24)
+
+
+******************************************************************
+** PostScript File description
+******************************************************************
+
+For each PCA routine, two pages are produced. The first page gives the
+mean spectrum, and the top for eigenvectors of the input dataset
+(either a set of models or real galaxy spectra). The second page shows
+some example PCA reconstructions (red) of the input spectra (black -
+in many cases invisible under the red).
+
+The PCA routine that has been used in the generation of the particular
+pages is given at the top of the page. 
+
+In order you will find:
+* SVD (plain and ordinary PCA)
+* SVD where the reconstruction uses the error array of each spectrum
+* IDL-Astro PCA 
+official RSI PCOMP routine
+* EM-PCA
+* Trimmed SVD: outliers in the dataset are iteratively removed by
+   running SVD-PCA multiple times (an easy way to make PCA a bit more
+   robust). 
+* Robust PCA: iterative routine of Budavari, Wild et al. (2008)
+* Robust PCA with errors: same, but using the error arrays from each
+   spectrum to reconstruct the spectra and during the robust creation of
+   the eigenspectra. 
+
+
+
+
+
+
+
+
+******************************************************************
+** 0) Start up 
+******************************************************************
+
+VWPCA_TRYME.PRO
+===============
+
+Uses a test dataset (model or real data) to check the code works on
+your system, and produce an output postscript file comparing the
+eigenvectors (page 1) and reconstructions (page 2) of the different
+PCA algorithms.
+
+IDL> vwpca_tryme
+
+******************************************************************
+** 1) CREATING EIGEN-VECTORS
+******************************************************************
+
+VWPCA.PRO
+=========
+
+Computes the eigen-vectors of your data matrix, and, if requested, the
+principal component amplitudes (see Section 2).
+ 
+This routine is a wrapper which runs one of the PCA algorithms,
+depending on the keyword parameter set: 
+/ASTPCA    = PCA from IDL astro (VWPCA_IDLAST.PRO)
+             http://idlastro.gsfc.nasa.gov/ftp/pro/math/pca.pro
+/PCOMP     = PCA from inbuilt RSI routine (pcomp.pro)
+/EMPCA     = PCA using expectation maximisation (VWPCA_EM.PRO)          
+/SVD       = PCA using singular value decomposition (VWPCA_SVD.PRO)
+/ROBUST    = PCA using robust and iterative routine of Budavari, Wild
+et al. (2008)  (VWPCA_INC.pro or VWPCA_INCGAPPY.pro)
+
+e.g. 
+IDL> namplitudes = 0
+IDL> eigenvectors = VWPCA(data_array, namplitudes, variances, pcs,
+                          mean_array, eigenvalues,/SVD)
+
+in this case no PC amplitudes will be calculated, and you can move
+onto the following section to chose your own method for their
+calculation. 
+
+
+******************************************************************
+** 2) Calculating the principal component amplitudes
+******************************************************************
+
+There are a variety of options for calculating the PC amplitudes after
+the eigenvectors have been created in Section 1. 
+
+1) straight projection 
+
+IDL> pcs = (data_array-mean_array) ## transpose(eigenvectors)
+
+
+VWPCA_GAPPY.PRO
+===============
+2) using the Gappy-PCA algorithm of Connolly & Szalay (1999, AJ, 117,
+   2052). This takes into account the errors on the data vectors. 
+
+IDL> pcs = vwpca_gappy(data,error,eigenvectors,mean_array)
+
+
+VWPCA_NORMGAPPY.PRO
+===================
+
+3) using the normalised-gappy-PCA algorithm of G. Lemson. This takes
+   account of the errors on the data vectors, as well as the possible
+   unknown normalisation (overall flux level) of the data vector in
+   the presence of gaps and errors. 
+
+IDL> pcs = vwpca_normgappy(data,error,eignvectors,mean_array,norm=norm)
+
+
+******************************************************************
+** 3) Reconstructing your data
+******************************************************************
+
+The final part of PCA is to reconstruct your data vector using your
+eigenbasis (Section 1) and the PC amplitudes for the data vector
+(Section 2)
+
+VWPCA_RECONSTRUCT.PRO
+=====================
+
+IDL> reconstructed_data = vwpca_reconstruct(pcs,eigenvectors)+mean_array
+
+or, if you have used vwpca_normgappy.pro in Section 2
+
+IDL> reconstructed_data = (vwpca_reconstruct(pcs,eigenvectors)+mean_array)*norm
+
+Now you can plot our old data and PCA-reconstruction on top of one
+another to check it worked.
