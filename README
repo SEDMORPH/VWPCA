@@ -29,12 +29,12 @@ Darren Madgwick
 
 
 We would appreciate any acknowledgements for the use of this code.  In
-particular, please if you use the ROBUST algorithm, cite this paper:
-Budavari et al. 2008, MNRAS, arXiv:0809.0881
-
+particular please if you use:
+* the ROBUST algorithm, cite Budavari et al. 2009, MNRAS, 394, 1496
+* the normalised gappy PCA, cite Wild et al. 2007, MNRAS, 381, 543
 
 Vivienne Wild 
-(wild@iap.fr  2008-11-24)
+vw8@st-andrews.ac.uk
 
 
 ******************************************************************
