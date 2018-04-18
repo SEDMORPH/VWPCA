@@ -149,7 +149,7 @@ err2[ind] = 1.
 
 if KEYWORD_SET(KW_GAPPY) then pcs = vwpca_gappy(x,err2,U,m,/silent) $ 
 else pcs = vwpca_normgappy(x,err2,U,m,norm=norm) ;eq. 5 and 1 of [2] 
-stop
+
 ;;------
 ;; Update data vector with reconstruction.
 ;; In the norm-gappy case, also normalise data vector.
