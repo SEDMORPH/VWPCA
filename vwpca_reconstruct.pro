@@ -5,7 +5,7 @@
 ;    Vivienne Wild <wild@iap.fr>
 ;
 ; PURPOSE: 
-;   To recsontruct data-vector(s) using the principal component
+;   To reconstruct data-vector using the principal component
 ;   amplitudes of the data vector and eigenbasis
 ;    
 ; CATEGORY:
@@ -15,14 +15,16 @@
 ;   reconstructed_data = VWPCA_RECONSTRUCT(pcs,evects)
 ;
 ; INPUTS:
-;   pcs      - principal component amplitudes (n-amplitude x n-object matrix)
+;   pcs      - principal component amplitudes (n-amplitude)
 ;   evects   - eigenvectors (n-bins x n-evectors matrix)
 ;
 ; OUTPUTS:
 ;   reconstructed data vector
 ;
 ; MODIFICATION HISTORY:
-;   2006 First implemented in IDL V. Wild   
+;   2006 First implemented in IDL V. Wild
+;   2017 Modified header to fix incorrect information on multiple data
+;   vectors. It doesn't work for multiple data vectors. 
 ;-
 ;****************************************************************************************;
 ;  Copyright (c) 2006, Vivienne Wild 
