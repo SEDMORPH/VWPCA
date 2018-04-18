@@ -21,13 +21,10 @@
 ;   Data  = The 2-d data matrix (nbin,nobj), arbitrary normalisation allowed
 ;   Error = The 1-sigma error matrix (nbin,nobj)
 ;   Evecs = The eigenvector matrix (nbin,nvec)
-;   Mean  = The mean vector (nbin). This is recalculated if
-;           /reconstruct set.
+;   Mean  = The mean vector (nbin). 
 ;
 ; KEYWORD PARAMETERS:
 ;   /RECONSTRUCT = fill in gaps in data matrix with PCA reconstruction
-;                 and recalculate mean array (useful
-;                 for performing iterative calculation of eigenspectra)
 ;   /CONSERVE_MEMORY  = perform calculations conserving memory instead
 ;                      of IDL optimised matrix calculations (slower) 
 ;
@@ -50,7 +47,11 @@
 ; MODIFICATION HISTORY:
 ;
 ;   2007-03-16  First implementation in IDL (V. Wild)
-;   2008-12-11  Tidy up for public release (V. Wild) 
+;   2008-12-11  Tidy up for public release (V. Wild)
+;   2018-18-04  Bug fix: previous version was update the input mean
+;   array if the /reconstruct keyword was set. This was useful for
+;   iterative calculation of eigenbasis, but makes no sense if
+;   you are projecting a new dataset onto an existing eigenbasis. 
 ;-
 ;****************************************************************************************;
 ;  Copyright (c) 2007, Gerard Lemson, Vivienne Wild                                                     ;
@@ -200,9 +201,6 @@ for j=0L,nobj-1 do begin
 
 endfor
 
-;;-- Calculate new mean if data array has been updated
-
-if KEYWORD_SET(reconstruct) then mean = TOTAL(data,2,/double)/double(nbin)
 
 return,pcs
 
